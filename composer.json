@@ -1,0 +1,32 @@
+{
+    "name": "bfg/repository",
+    "description": "",
+    "type": "bfg-app",
+    "keywords": ["laravel", "extension", "repository"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "bfg"
+        }
+    ],
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.0.0"
+    },
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "Bfg\\Repository\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bfg\\Repository\\ServiceProvider"
+            ]
+        }
+    }
+}
