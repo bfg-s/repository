@@ -1,6 +1,6 @@
 {
     "name": "bfg/repository",
-    "description": "",
+    "description": "Missing repositories for Eloquent models Laravel",
     "type": "bfg-app",
     "keywords": ["laravel", "extension", "repository"],
     "license": "MIT",

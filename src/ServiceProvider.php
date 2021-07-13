@@ -12,16 +12,10 @@ use Bfg\Repository\Commands\MakeRepositoryCommand;
 class ServiceProvider extends InstalledProvider
 {
     /**
-     * The name of extension.
-     * @var string|null
-     */
-    public ?string $name = "bfg/repository";
-
-    /**
      * The description of extension.
      * @var string|null
      */
-    public ?string $description = "Missing repositories for Eloquent models Laravel.";
+    public ?string $description = "Missing repositories for Eloquent models Laravel";
 
     /**
      * Set as installed by default.
