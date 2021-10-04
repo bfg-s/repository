@@ -7,7 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 /**
- * Class CoreRepository
+ * Class Repository.
  *
  * @package Bfg\Dev
  *
@@ -22,16 +22,16 @@ abstract class Repository
     protected Model $model;
 
     /**
-     * Resource for wrap data
+     * Resource for wrap data.
      * @var string|null
      */
-    protected ?string $resource;
+    protected ?string $resource = null;
 
     /**
-     * Cache singleton requests
+     * Cache singleton requests.
      * @var array
      */
-    static protected array $cache = [];
+    protected static array $cache = [];
 
     /**
      * CoreRepository constructor.
@@ -52,7 +52,7 @@ abstract class Repository
     }
 
     /**
-     * Cache and get method data
+     * Cache and get method data.
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
@@ -60,22 +60,15 @@ abstract class Repository
     public function cache(string $name, array $arguments = []): mixed
     {
         if ($this->resource) {
-
             $resource = $this->resource;
 
             $this->resource = null;
 
             return $this->wrap($resource, $name, $arguments);
-
-        } else if (!$this->has_cache($name)) {
-
+        } elseif (! $this->has_cache($name)) {
             if (method_exists($this, $name)) {
-
                 static::$cache[$name] = embedded_call([$this, $name], $arguments);
-            }
-
-            else {
-
+            } else {
                 return null;
             }
         }
@@ -84,7 +77,7 @@ abstract class Repository
     }
 
     /**
-     * Remove and cache again and get data
+     * Remove and cache again and get data.
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
@@ -119,7 +112,6 @@ abstract class Repository
     public function init_eq_cache($equal, string $name, array $arguments = []): static
     {
         if ($equal) {
-
             $this->re_cache($name, $arguments);
         }
 
@@ -146,19 +138,13 @@ abstract class Repository
     public function wrap(string $resource, string $method = null, array $arguments = []): mixed
     {
         if ($method) {
-
             $result = $this->cache($method, $arguments);
 
             if (($result instanceof Collection || $result instanceof LengthAwarePaginator) && method_exists($resource, 'collection')) {
-
                 $result = $resource::collection($result);
-
-            } else if (method_exists($resource, 'make')) {
-
+            } elseif (method_exists($resource, 'make')) {
                 $result = $resource::make($result);
-
             } else {
-
                 $result = new $resource($result);
             }
 
@@ -169,7 +155,7 @@ abstract class Repository
     }
 
     /**
-     * Model class namespace getter
+     * Model class namespace getter.
      *
      * @return string|object
      */
@@ -184,7 +170,7 @@ abstract class Repository
     }
 
     /**
-     * Cache and get
+     * Cache and get.
      * @param  string  $name
      * @return mixed
      */
@@ -207,7 +193,7 @@ abstract class Repository
      * @param  array  $arguments
      * @return mixed
      */
-    public function __invoke(string $name, array $arguments = [])
+    public function __invoke(string $name, array $arguments = []): mixed
     {
         return $this->re_cache($name, $arguments);
     }

@@ -30,8 +30,7 @@ class MakeRepositoryCommand extends GeneratorCommand
      */
     public function __construct(Filesystem $files)
     {
-        if (!is_dir(app_path('Repositories'))) {
-
+        if (! is_dir(app_path('Repositories'))) {
             mkdir(app_path('Repositories'), 0777, 1);
         }
 
@@ -61,7 +60,7 @@ class MakeRepositoryCommand extends GeneratorCommand
                     $this->userProviderModel(),
                     $this->repositoryMethods(),
                     $this->repositoryImplement(),
-                    $this->repositoryModel()
+                    $this->repositoryModel(),
                 ], $stub
             );
         }
@@ -79,9 +78,8 @@ class MakeRepositoryCommand extends GeneratorCommand
     {
         $name = ltrim($name, '\\/');
 
-        if (!str_ends_with($name, "Repository")) {
-
-            $name .= "Repository";
+        if (! str_ends_with($name, 'Repository')) {
+            $name .= 'Repository';
         }
 
         $name = str_replace('/', '\\', $name);
@@ -102,34 +100,27 @@ class MakeRepositoryCommand extends GeneratorCommand
      */
     protected function repositoryModel()
     {
-        $line = "// TODO: Implement getModelClass() method.";
+        $line = '// TODO: Implement getModelClass() method.';
 
         $model = $this->option('model');
 
-        if (!$model) {
-
+        if (! $model) {
             $model = $this->argument('name');
         }
 
-        if ($model && !class_exists($model)) {
-
-            if (class_exists("App\\Models\\" . $model)) {
-
-                $model = "App\\Models\\" . $model;
-
-            } else if (class_exists("App\\" . $model)) {
-
-                $model = "App\\" . $model;
-
+        if ($model && ! class_exists($model)) {
+            if (class_exists('App\\Models\\'.$model)) {
+                $model = 'App\\Models\\'.$model;
+            } elseif (class_exists('App\\'.$model)) {
+                $model = 'App\\'.$model;
             } else {
-
                 $model = null;
             }
         } else {
             $model = null;
         }
 
-        return $model ? "return \\" . trim($model) . "::class;" : $line;
+        return $model ? 'return \\'.trim($model).'::class;' : $line;
     }
 
     /**
@@ -137,7 +128,7 @@ class MakeRepositoryCommand extends GeneratorCommand
      */
     protected function repositoryImplement()
     {
-        return "";
+        return '';
     }
 
     /**
@@ -145,7 +136,7 @@ class MakeRepositoryCommand extends GeneratorCommand
      */
     protected function repositoryMethods()
     {
-        $methodsText = "";
+        $methodsText = '';
 
         foreach ($this->option('methods') as $item) {
             $methods = array_map('trim', explode(',', $item));
@@ -165,7 +156,7 @@ TEXT;
             }
         }
 
-        return !empty($methodsText) ? "\n    " . rtrim($methodsText) : "";
+        return ! empty($methodsText) ? "\n    ".rtrim($methodsText) : '';
     }
 
     /**

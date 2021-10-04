@@ -6,17 +6,11 @@ use Bfg\Installer\Providers\InstalledProvider;
 use Bfg\Repository\Commands\MakeRepositoryCommand;
 
 /**
- * Class ServiceProvider
+ * Class ServiceProvider.
  * @package Bfg\Repository
  */
 class ServiceProvider extends InstalledProvider
 {
-    /**
-     * The description of extension.
-     * @var string|null
-     */
-    public ?string $description = "Missing repositories for Eloquent models Laravel";
-
     /**
      * Set as installed by default.
      * @var bool
@@ -31,7 +25,7 @@ class ServiceProvider extends InstalledProvider
     public function installed(): void
     {
         $this->commands([
-            MakeRepositoryCommand::class
+            MakeRepositoryCommand::class,
         ]);
     }
 
@@ -45,4 +39,3 @@ class ServiceProvider extends InstalledProvider
         //
     }
 }
-
