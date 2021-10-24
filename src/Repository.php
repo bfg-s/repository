@@ -36,10 +36,14 @@ abstract class Repository
     /**
      * CoreRepository constructor.
      */
-    public function __construct()
+    public function __construct(Model $model = null)
     {
-        $class = $this->getModelClass();
-        $this->model = is_string($class) ? app($this->getModelClass()) : $class;
+        if ($model) {
+            $this->model = $model;
+        } else {
+            $class = $this->getModelClass();
+            $this->model = is_string($class) ? app($this->getModelClass()) : $class;
+        }
     }
 
     /**
@@ -56,6 +60,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
+     * @throws \Throwable
      */
     public function cache(string $name, array $arguments = []): mixed
     {
@@ -81,6 +86,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
+     * @throws \Throwable
      */
     public function re_cache(string $name, array $arguments = []): mixed
     {
@@ -95,6 +101,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return $this
+     * @throws \Throwable
      */
     public function init_cache(string $name, array $arguments = []): static
     {
@@ -108,6 +115,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return $this
+     * @throws \Throwable
      */
     public function init_eq_cache($equal, string $name, array $arguments = []): static
     {
@@ -134,6 +142,7 @@ abstract class Repository
      * @param  string|null  $method
      * @param  array  $arguments
      * @return static|mixed
+     * @throws \Throwable
      */
     public function wrap(string $resource, string $method = null, array $arguments = []): mixed
     {
@@ -166,13 +175,14 @@ abstract class Repository
      */
     public function model(): Model
     {
-        return clone $this->model;
+        return $this->model;
     }
 
     /**
      * Cache and get.
      * @param  string  $name
      * @return mixed
+     * @throws \Throwable
      */
     public function __get(string $name)
     {
@@ -192,6 +202,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
+     * @throws \Throwable
      */
     public function __invoke(string $name, array $arguments = []): mixed
     {
