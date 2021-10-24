@@ -178,6 +178,11 @@ abstract class Repository
         return $this->model;
     }
 
+    public function __call(string $name, array $arguments)
+    {
+        return $this->model()->{$name}(...$arguments);
+    }
+
     /**
      * Cache and get.
      * @param  string  $name
@@ -186,7 +191,10 @@ abstract class Repository
      */
     public function __get(string $name)
     {
-        return $this->cache($name);
+        if (method_exists($this, $name) || $this->has_cache($name)) {
+            return $this->cache($name);
+        }
+        return $this->model()->{$name};
     }
 
     /**
