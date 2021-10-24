@@ -194,7 +194,7 @@ abstract class Repository
         if (method_exists($this, $name) || $this->has_cache($name)) {
             return $this->cache($name);
         }
-        return $this->model()->{$name};
+        return static::$cache[$name] = $this->model()->{$name};
     }
 
     /**
