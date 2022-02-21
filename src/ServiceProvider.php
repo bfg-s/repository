@@ -2,27 +2,21 @@
 
 namespace Bfg\Repository;
 
-use Bfg\Installer\Providers\InstalledProvider;
+use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use Bfg\Repository\Commands\MakeRepositoryCommand;
 
 /**
  * Class ServiceProvider.
  * @package Bfg\Repository
  */
-class ServiceProvider extends InstalledProvider
+class ServiceProvider extends IlluminateServiceProvider
 {
-    /**
-     * Set as installed by default.
-     * @var bool
-     */
-    public bool $installed = true;
-
     /**
      * Executed when the provider is registered
      * and the extension is installed.
      * @return void
      */
-    public function installed(): void
+    public function register(): void
     {
         $this->commands([
             MakeRepositoryCommand::class,
@@ -30,11 +24,10 @@ class ServiceProvider extends InstalledProvider
     }
 
     /**
-     * Executed when the provider run method
-     * "boot" and the extension is installed.
+     * Bootstrap services.
      * @return void
      */
-    public function run(): void
+    public function boot()
     {
         //
     }
