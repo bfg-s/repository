@@ -11,7 +11,8 @@
     ],
     "prefer-stable": true,
     "require": {
-        "php": ">=8.0.0"
+        "php": ">=8.0.0",
+        "bfg/embedded-call": "^1.0.0"
     },
     "require-dev": {},
     "autoload": {
