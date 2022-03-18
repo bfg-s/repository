@@ -34,6 +34,12 @@ abstract class Repository
     protected static array $cache = [];
 
     /**
+     * Local cache singleton requests.
+     * @var array
+     */
+    protected $localCache = [];
+
+    /**
      * CoreRepository constructor.
      */
     public function __construct(Model $model = null)
@@ -52,6 +58,9 @@ abstract class Repository
      */
     public function has_cache(string $name): bool
     {
+        if ($this instanceof LocaledRepositoryInterface) {
+            return array_key_exists($name, $this->localCache);
+        }
         return array_key_exists($name, static::$cache);
     }
 
@@ -72,12 +81,19 @@ abstract class Repository
             return $this->wrap($resource, $name, $arguments);
         } elseif (! $this->has_cache($name)) {
             if (method_exists($this, $name)) {
-                static::$cache[$name] = embedded_call([$this, $name], $arguments);
+                $result = embedded_call([$this, $name], $arguments);
+                if ($this instanceof LocaledRepositoryInterface) {
+                    $this->localCache[$name] = $result;
+                } else {
+                    static::$cache[$name] = $result;
+                }
             } else {
                 return null;
             }
         }
-
+        if ($this instanceof LocaledRepositoryInterface) {
+            return $this->localCache[$name];
+        }
         return static::$cache[$name];
     }
 
@@ -91,7 +107,11 @@ abstract class Repository
     public function re_cache(string $name, array $arguments = []): mixed
     {
         if ($this->has_cache($name)) {
-            unset(static::$cache[$name]);
+            if ($this instanceof LocaledRepositoryInterface) {
+                unset($this->localCache[$name]);
+            } else {
+                unset(static::$cache[$name]);
+            }
         }
 
         return $this->cache($name, $arguments);
@@ -194,6 +214,9 @@ abstract class Repository
         if (method_exists($this, $name) || $this->has_cache($name)) {
             return $this->cache($name);
         }
+        if ($this instanceof LocaledRepositoryInterface) {
+            return $this->localCache[$name] = $this->model()->{$name};
+        }
         return static::$cache[$name] = $this->model()->{$name};
     }
 
@@ -203,7 +226,11 @@ abstract class Repository
      */
     public function __set(string $name, $value): void
     {
-        static::$cache[$name] = $value;
+        if ($this instanceof LocaledRepositoryInterface) {
+            $this->localCache[$name] = $value;
+        } else {
+            static::$cache[$name] = $value;
+        }
     }
 
     /**
