@@ -30,11 +30,16 @@ class MakeRepositoryCommand extends GeneratorCommand
      */
     public function __construct(Filesystem $files)
     {
+        parent::__construct($files);
+    }
+
+    public function handle()
+    {
         if (! is_dir(app_path('Repositories'))) {
             mkdir(app_path('Repositories'), 0777, 1);
         }
 
-        parent::__construct($files);
+        return parent::handle();
     }
 
     /**
@@ -148,9 +153,9 @@ class MakeRepositoryCommand extends GeneratorCommand
      */
     public function {$method}()
     {
-        //   
+        //
     }
-    
+
 TEXT;
                 $methodsText .= $m;
             }
