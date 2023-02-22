@@ -251,6 +251,6 @@ abstract class Repository
      */
     public static function __callStatic(string $name, array $arguments): static
     {
-        return app(static::class)->{$name}(...$arguments);
+        return app(static::class)->re_cache($name, $arguments);
     }
 }
