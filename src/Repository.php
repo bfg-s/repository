@@ -243,4 +243,14 @@ abstract class Repository
     {
         return $this->re_cache($name, $arguments);
     }
+
+    /**
+     * @param  string  $name
+     * @param  array  $arguments
+     * @return static
+     */
+    public static function __callStatic(string $name, array $arguments): static
+    {
+        return app(static::class)->{$name}(...$arguments);
+    }
 }
