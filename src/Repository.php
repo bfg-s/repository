@@ -5,6 +5,7 @@ namespace Bfg\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Throwable;
 
 /**
  * Class Repository.
@@ -31,7 +32,7 @@ abstract class Repository
      * Cache singleton requests.
      * @var array
      */
-    protected static array $cache = [];
+    protected static array $_cache = [];
 
     /**
      * Local cache singleton requests.
@@ -61,7 +62,8 @@ abstract class Repository
         if ($this instanceof LocaledRepositoryInterface) {
             return array_key_exists($name, $this->localCache);
         }
-        return array_key_exists($name, static::$cache);
+        return isset(static::$_cache[static::class])
+            && array_key_exists($name, static::$_cache[static::class]);
     }
 
     /**
@@ -69,7 +71,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function cache(string $name, array $arguments = []): mixed
     {
@@ -85,7 +87,7 @@ abstract class Repository
                 if ($this instanceof LocaledRepositoryInterface) {
                     $this->localCache[$name] = $result;
                 } else {
-                    static::$cache[$name] = $result;
+                    static::$_cache[static::class][$name] = $result;
                 }
             } else {
                 return null;
@@ -94,7 +96,7 @@ abstract class Repository
         if ($this instanceof LocaledRepositoryInterface) {
             return $this->localCache[$name];
         }
-        return static::$cache[$name];
+        return static::$_cache[static::class][$name];
     }
 
     /**
@@ -102,7 +104,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function re_cache(string $name, array $arguments = []): mixed
     {
@@ -110,7 +112,7 @@ abstract class Repository
             if ($this instanceof LocaledRepositoryInterface) {
                 unset($this->localCache[$name]);
             } else {
-                unset(static::$cache[$name]);
+                unset(static::$_cache[static::class][$name]);
             }
         }
 
@@ -121,7 +123,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return $this
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function init_cache(string $name, array $arguments = []): static
     {
@@ -135,7 +137,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return $this
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function init_eq_cache($equal, string $name, array $arguments = []): static
     {
@@ -162,7 +164,7 @@ abstract class Repository
      * @param  string|null  $method
      * @param  array  $arguments
      * @return static|mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function wrap(string $resource, string $method = null, array $arguments = []): mixed
     {
@@ -198,6 +200,21 @@ abstract class Repository
         return $this->model;
     }
 
+    /**
+     * Clean cache for repository
+     * @return $this
+     */
+    public function clean(): static
+    {
+        if ($this instanceof LocaledRepositoryInterface) {
+            $this->localCache = [];
+        } else {
+            static::cleanCache();
+        }
+
+        return $this;
+    }
+
     public function __call(string $name, array $arguments)
     {
         return $this->model()->{$name}(...$arguments);
@@ -207,7 +224,7 @@ abstract class Repository
      * Cache and get.
      * @param  string  $name
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function __get(string $name)
     {
@@ -217,7 +234,7 @@ abstract class Repository
         if ($this instanceof LocaledRepositoryInterface) {
             return $this->localCache[$name] = $this->model()->{$name};
         }
-        return static::$cache[$name] = $this->model()->{$name};
+        return static::$_cache[static::class][$name] = $this->model()->{$name};
     }
 
     /**
@@ -229,7 +246,7 @@ abstract class Repository
         if ($this instanceof LocaledRepositoryInterface) {
             $this->localCache[$name] = $value;
         } else {
-            static::$cache[$name] = $value;
+            static::$_cache[static::class][$name] = $value;
         }
     }
 
@@ -237,7 +254,7 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function __invoke(string $name, array $arguments = []): mixed
     {
@@ -248,9 +265,19 @@ abstract class Repository
      * @param  string  $name
      * @param  array  $arguments
      * @return static
+     * @throws Throwable
      */
     public static function __callStatic(string $name, array $arguments): static
     {
         return app(static::class)->re_cache($name, $arguments);
+    }
+
+    /**
+     * Clear repository static cache
+     * @return void
+     */
+    public static function cleanCache(): void
+    {
+        static::$_cache[static::class] = [];
     }
 }
