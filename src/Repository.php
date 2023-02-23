@@ -273,6 +273,14 @@ abstract class Repository
     }
 
     /**
+     * @return static
+     */
+    public static function new(): static
+    {
+        return app(static::class);
+    }
+
+    /**
      * Clear repository static cache
      * @return void
      */
