@@ -18,9 +18,9 @@ use Throwable;
 abstract class Repository
 {
     /**
-     * @var Model
+     * @var mixed
      */
-    protected Model $model;
+    protected mixed $model;
 
     /**
      * Resource for wrap data.
@@ -188,9 +188,12 @@ abstract class Repository
     /**
      * Model class namespace getter.
      *
-     * @return string|object
+     * @return string|object|null
      */
-    abstract protected function getModelClass(): string|object;
+    protected function getModelClass(): string|object|null
+    {
+        return null;
+    }
 
     /**
      * @return Model
