@@ -1,1 +1,1 @@
-# ChangelogAll notable changes to this project will be documented in this file.## [0.0.1 - Beta] - 2021-07-12### Added- License mit.- Readme documentation file.- Initial functionality of the package.
+# ChangelogAll notable changes to this project will be documented in this file.## [1.4.0] - 2024-04-29### Fixed* Fixed bug with unique cache key.### Added* Repositoriable trait.## [0.0.1 - Beta] - 2021-07-12### Added* License mit.* Readme documentation file.* Initial functionality of the package.
