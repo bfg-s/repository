@@ -13,9 +13,9 @@ use Illuminate\Support\Str;
 trait Repositoriable
 {
     /**
-     * @var Repository|null
+     * @var Repository|string|null
      */
-    protected Repository|null $repo = null;
+    protected $repo = null;
 
     /**
      * Trait initialize function
@@ -23,17 +23,23 @@ trait Repositoriable
      */
     protected function initializeRepositoriable(): void
     {
-        $className = class_basename(static::class);
-        $repositoryClass = '\\App\\Repositories\\' . Str::plural($className) . 'Repository';
-        if (class_exists($repositoryClass)) {
-            $class = new $repositoryClass($this);
-        }
-        $repositoryClass = '\\App\\Repositories\\' . $className . 'Repository';
-        if (!isset($class) && class_exists($repositoryClass)) {
-            $class = new $repositoryClass($this);
-        }
-        if (isset($class) && $class instanceof Repository) {
-            $this->repo = $class;
+        if ($this->repo === null) {
+
+            $className = class_basename(static::class);
+            $repositoryClass = '\\App\\Repositories\\' . Str::plural($className) . 'Repository';
+            if (class_exists($repositoryClass)) {
+                $class = new $repositoryClass($this);
+            }
+            $repositoryClass = '\\App\\Repositories\\' . $className . 'Repository';
+            if (!isset($class) && class_exists($repositoryClass)) {
+                $class = new $repositoryClass($this);
+            }
+            if (isset($class) && $class instanceof Repository) {
+                $this->repo = $class;
+            }
+        } else if (is_string($this->repo)) {
+
+            $this->repo = new $this->repo($this);
         }
     }
 
@@ -42,6 +48,10 @@ trait Repositoriable
      */
     public function getRepositoryAttribute(): Repository|null
     {
+        if (! $this->repo || is_string($this->repo)) {
+
+            $this->initializeRepositoriable();
+        }
         return $this->repo;
     }
 
