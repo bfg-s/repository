@@ -28,11 +28,11 @@ trait Repositoriable
             $className = class_basename(static::class);
             $repositoryClass = '\\App\\Repositories\\' . Str::plural($className) . 'Repository';
             if (class_exists($repositoryClass)) {
-                $class = new $repositoryClass($this);
+                $class = app($repositoryClass);
             }
             $repositoryClass = '\\App\\Repositories\\' . $className . 'Repository';
             if (!isset($class) && class_exists($repositoryClass)) {
-                $class = new $repositoryClass($this);
+                $class = app($repositoryClass);
             }
             if (isset($class) && $class instanceof Repository) {
                 $class->setModel($this);
