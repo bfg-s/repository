@@ -45,11 +45,14 @@ abstract class Repository
     /**
      * Apply formula to the model repository.
      *
-     * @param  \Bfg\Repository\Formula  $formula
+     * @param  string  $formula
+     * @param  array  $parameters
      * @return $this
      */
-    public function formula(Formula $formula): static
+    public function formula(string $formula, array $parameters = []): static
     {
+        $formula = app($formula, $parameters);
+
         $result = $formula->apply($this->model());
 
         if ($result) {
