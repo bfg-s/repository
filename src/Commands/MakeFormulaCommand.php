@@ -170,10 +170,9 @@ TEXT;
     protected function getOptions()
     {
         return [
-            //['contract', 'c', InputOption::VALUE_OPTIONAL, 'Create contract for repository'],
-            ['methods', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Methods for repository'],
-            ['model', 'm', InputOption::VALUE_OPTIONAL, 'Model of repository'],
-            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the repository already exists'],
+            ['methods', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Methods for formula'],
+            ['model', 'm', InputOption::VALUE_OPTIONAL, 'Model of formula'],
+            ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the formula already exists'],
         ];
     }
 
@@ -208,6 +207,6 @@ TEXT;
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return is_dir(app_path('Repositories')) ? $rootNamespace.'\\Repositories' : $rootNamespace;
+        return is_dir(app_path('Formulas')) ? $rootNamespace.'\\Formulas' : $rootNamespace;
     }
 }

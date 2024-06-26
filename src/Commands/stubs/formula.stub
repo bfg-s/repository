@@ -16,7 +16,7 @@ class {{ class }} extends Formula{{ implement }}
      * @param  mixed  $model
      * @return mixed
      */
-    abstract public function apply(mixed $model): mixed
+    public function apply(mixed $model): mixed
     {
         //
     }
