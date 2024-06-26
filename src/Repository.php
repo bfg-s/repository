@@ -210,9 +210,9 @@ abstract class Repository
     }
 
     /**
-     * @return Model|null
+     * @return mixed
      */
-    public function model(): Model|null
+    public function model(): mixed
     {
         if (! $this->model) {
 
