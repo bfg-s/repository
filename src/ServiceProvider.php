@@ -4,6 +4,7 @@ namespace Bfg\Repository;
 
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use Bfg\Repository\Commands\MakeRepositoryCommand;
+use Bfg\Repository\Commands\MakeFormulaCommand;
 
 /**
  * Class ServiceProvider.
@@ -20,6 +21,7 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->commands([
             MakeRepositoryCommand::class,
+            MakeFormulaCommand::class,
         ]);
     }
 

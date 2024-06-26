@@ -17,8 +17,10 @@ use Throwable;
  */
 abstract class Repository
 {
+    use EloquentHelpers;
+
     /**
-     * @var mixed
+     * @var mixed|Model
      */
     protected mixed $model;
 
@@ -51,6 +53,24 @@ abstract class Repository
             $class = $this->getModelClass();
             $this->model = is_string($class) ? app($this->getModelClass()) : $class;
         }
+    }
+
+    /**
+     * Apply formula to the model repository.
+     *
+     * @param  \Bfg\Repository\Formula  $formula
+     * @return $this
+     */
+    public function formula(Formula $formula): static
+    {
+        $result = $formula->apply($this->model);
+
+        if ($result) {
+
+            $this->model = $result;
+        }
+
+        return $this;
     }
 
     /**

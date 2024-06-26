@@ -1,0 +1,23 @@
+<?php
+
+namespace {{ namespace }};
+
+use Bfg\Repository\Formula;
+
+/**
+ * Class {{ class }}
+ * @package {{ namespace }}
+ */
+class {{ class }} extends Formula{{ implement }}
+{
+    /**
+     * Apply formula to the model repository.
+     *
+     * @param  mixed  $model
+     * @return mixed
+     */
+    abstract public function apply(mixed $model): mixed
+    {
+        //
+    }
+}
