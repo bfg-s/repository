@@ -49,7 +49,7 @@ abstract class Repository
      * @param  array  $parameters
      * @return $this
      */
-    public function formula(string $formula, array $parameters = []): static
+    public function formula(string $formula, ...$parameters): static
     {
         $formula = app($formula, $parameters);
 
