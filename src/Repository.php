@@ -22,7 +22,7 @@ abstract class Repository
     /**
      * @var mixed|Model
      */
-    protected mixed $model;
+    protected mixed $model = null;
 
     /**
      * Resource for wrap data.
@@ -43,19 +43,6 @@ abstract class Repository
     protected $localCache = [];
 
     /**
-     * CoreRepository constructor.
-     */
-    public function __construct(Model $model = null)
-    {
-        if ($model) {
-            $this->model = $model;
-        } else {
-            $class = $this->getModelClass();
-            $this->model = is_string($class) ? app($this->getModelClass()) : $class;
-        }
-    }
-
-    /**
      * Apply formula to the model repository.
      *
      * @param  \Bfg\Repository\Formula  $formula
@@ -63,7 +50,7 @@ abstract class Repository
      */
     public function formula(Formula $formula): static
     {
-        $result = $formula->apply($this->model);
+        $result = $formula->apply($this->model());
 
         if ($result) {
 
@@ -220,10 +207,16 @@ abstract class Repository
     }
 
     /**
-     * @return Model
+     * @return Model|null
      */
-    public function model(): Model
+    public function model(): Model|null
     {
+        if (! $this->model) {
+
+            $class = $this->getModelClass();
+            $this->model = is_string($class) ? app($class) : $class;
+        }
+
         return $this->model;
     }
 
@@ -250,6 +243,17 @@ abstract class Repository
     {
         $cacheKey = static::class . $this->model?->id ?: '';
         static::$_cache[$cacheKey] = [];
+    }
+
+    /**
+     * @param  mixed  $model
+     * @return $this
+     */
+    public function setModel(mixed $model): static
+    {
+        $this->model = $model;
+
+        return $this;
     }
 
     public function __call(string $name, array $arguments)

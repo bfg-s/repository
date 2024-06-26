@@ -35,11 +35,12 @@ trait Repositoriable
                 $class = new $repositoryClass($this);
             }
             if (isset($class) && $class instanceof Repository) {
+                $class->setModel($this);
                 $this->repo = $class;
             }
         } else if (is_string($this->repo)) {
 
-            $this->repo = new $this->repo($this);
+            $this->repo = (new $this->repo)->setModel($this);
         }
     }
 
