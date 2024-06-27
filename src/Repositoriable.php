@@ -9,11 +9,12 @@ use Illuminate\Support\Str;
  * @package Bfg\Repository
  * @mixin \Illuminate\Database\Eloquent\Model
  * @property-read Repository $repository
+ * @template T
  */
 trait Repositoriable
 {
     /**
-     * @var Repository|string|null
+     * @var T|Repository|string|null
      */
     protected $repo = null;
 
@@ -40,12 +41,12 @@ trait Repositoriable
             }
         } else if (is_string($this->repo)) {
 
-            $this->repo = (new $this->repo)->setModel($this);
+            $this->repo = app($this->repo)->setModel($this);
         }
     }
 
     /**
-     * @return Repository|null
+     * @return Repository|T|null
      */
     public function getRepositoryAttribute(): Repository|null
     {
@@ -57,7 +58,7 @@ trait Repositoriable
     }
 
     /**
-     * @return Repository|null
+     * @return Repository|T|null
      */
     public static function repository(): Repository|null
     {
