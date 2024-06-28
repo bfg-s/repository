@@ -54,13 +54,36 @@ trait EloquentHelpers
         return $this->model()->cursorPaginate($perPage, $columns, $cursorName, $cursor);
     }
 
-    public function update(array $values)
+    public function create(array $attributes = [])
     {
-        return $this->model()->update($values);
+        if ($this->resource) {
+            return $this->resource::make(
+                $this->model()->create($attributes)
+            );
+        }
+        return $this->model()->create($attributes);
+    }
+
+    public function update(array $attributes)
+    {
+        $this->model()->update($attributes);
+
+        if ($this->resource) {
+            return $this->resource::make(
+                $this->model()
+            );
+        }
+        return $this->model();
     }
 
     public function delete()
     {
-        return $this->model()->delete();
+        $this->model()->delete();
+        if ($this->resource) {
+            return $this->resource::make(
+                $this->model()
+            );
+        }
+        return $this->model();
     }
 }
