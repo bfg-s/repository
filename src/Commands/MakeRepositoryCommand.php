@@ -123,7 +123,7 @@ class MakeRepositoryCommand extends GeneratorCommand
             }
         }
 
-        return $model ? 'return \\'.trim($model).'::class;' : $line;
+        return $model ? 'return \\'.trim(trim($model), '\\').'::class;' : $line;
     }
 
     /**
