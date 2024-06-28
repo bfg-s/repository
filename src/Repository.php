@@ -194,12 +194,17 @@ abstract class Repository
     }
 
     /**
-     * @param  string  $resource
+     * @param  string|null  $resource
      * @return mixed
      */
-    public function wrap(string $resource): mixed
+    public function wrap(string $resource = null): mixed
     {
         $result = $this->model();
+
+        if (! $resource) {
+
+            $resource = $this->resource;
+        }
 
         if (($result instanceof Collection || $result instanceof LengthAwarePaginator) && method_exists($resource, 'collection')) {
             return $resource::collection($result);
