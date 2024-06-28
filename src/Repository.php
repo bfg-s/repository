@@ -195,28 +195,19 @@ abstract class Repository
 
     /**
      * @param  string  $resource
-     * @param  string|null  $method
-     * @param  array  $arguments
-     * @return static|mixed
-     * @throws Throwable
+     * @return mixed
      */
-    public function wrap(string $resource, string $method = null, array $arguments = []): mixed
+    public function wrap(string $resource): mixed
     {
-        if ($method) {
-            $result = $this->cache($method, $arguments);
+        $result = $this->model();
 
-            if (($result instanceof Collection || $result instanceof LengthAwarePaginator) && method_exists($resource, 'collection')) {
-                $result = $resource::collection($result);
-            } elseif (method_exists($resource, 'make')) {
-                $result = $resource::make($result);
-            } else {
-                $result = new $resource($result);
-            }
-
-            return $result;
+        if (($result instanceof Collection || $result instanceof LengthAwarePaginator) && method_exists($resource, 'collection')) {
+            return $resource::collection($result);
+        } elseif (method_exists($resource, 'make')) {
+            return $resource::make($result);
+        } else {
+            return new $resource($result);
         }
-
-        return $this->resource($resource);
     }
 
     /**
@@ -241,6 +232,17 @@ abstract class Repository
         }
 
         return $this->model;
+    }
+
+    /**
+     * @param  mixed  $model
+     * @return $this
+     */
+    public function setModel(mixed $model): static
+    {
+        $this->model = $model;
+
+        return $this;
     }
 
     /**
@@ -276,17 +278,6 @@ abstract class Repository
     {
         $cacheKey = static::class . $this->model?->id ?: '';
         static::$_cache[$cacheKey] = [];
-    }
-
-    /**
-     * @param  mixed  $model
-     * @return $this
-     */
-    public function setModel(mixed $model): static
-    {
-        $this->model = $model;
-
-        return $this;
     }
 
     public function __call(string $name, array $arguments)
