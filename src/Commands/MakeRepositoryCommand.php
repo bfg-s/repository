@@ -121,8 +121,6 @@ class MakeRepositoryCommand extends GeneratorCommand
             } else {
                 $model = null;
             }
-        } else {
-            $model = null;
         }
 
         return $model ? 'return \\'.trim($model).'::class;' : $line;

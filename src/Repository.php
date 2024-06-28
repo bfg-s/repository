@@ -5,6 +5,7 @@ namespace Bfg\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Traits\Conditionable;
 use Throwable;
 
 /**
@@ -18,6 +19,7 @@ use Throwable;
 abstract class Repository
 {
     use EloquentHelpers;
+    use Conditionable;
 
     /**
      * @var mixed|Model
@@ -54,6 +56,24 @@ abstract class Repository
         $formula = app($formula, $parameters);
 
         $result = $formula->apply($this->model());
+
+        if ($result) {
+
+            $this->model = $result;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Apply scope to the model repository.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function scope(callable $callback): static
+    {
+        $result = call_user_func($callback, $this->model());
 
         if ($result) {
 
@@ -221,6 +241,16 @@ abstract class Repository
         }
 
         return $this->model;
+    }
+
+    /**
+     * @return $this
+     */
+    public function resetModel(): static
+    {
+        $this->model = null;
+
+        return $this;
     }
 
     /**
