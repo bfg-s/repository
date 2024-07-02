@@ -92,7 +92,7 @@ abstract class Repository
         if ($this instanceof LocaledRepositoryInterface) {
             return array_key_exists($name, $this->localCache);
         }
-        $cacheKey = static::class . $this->model?->id ?: '';
+        $cacheKey = $this->cacheKey();
         return isset(static::$_cache[$cacheKey])
             && array_key_exists($name, static::$_cache[$cacheKey]);
     }
@@ -106,7 +106,7 @@ abstract class Repository
      */
     public function cache(string $name, array $arguments = []): mixed
     {
-        $cacheKey = static::class . $this->model?->id ?: '';
+        $cacheKey = $this->cacheKey();
 
         if ($this->resource) {
             $resource = $this->resource;
@@ -133,6 +133,14 @@ abstract class Repository
     }
 
     /**
+     * @return string
+     */
+    protected function cacheKey(): string
+    {
+        return static::class . ($this->model instanceof Model ? $this->model->id : '');
+    }
+
+    /**
      * Remove and cache again and get data.
      * @param  string  $name
      * @param  array  $arguments
@@ -145,7 +153,7 @@ abstract class Repository
             if ($this instanceof LocaledRepositoryInterface) {
                 unset($this->localCache[$name]);
             } else {
-                $cacheKey = static::class . $this->model?->id ?: '';
+                $cacheKey = $this->cacheKey();
                 unset(static::$_cache[$cacheKey][$name]);
             }
         }
@@ -281,7 +289,7 @@ abstract class Repository
      */
     public function cleanCache(): void
     {
-        $cacheKey = static::class . $this->model?->id ?: '';
+        $cacheKey = $this->cacheKey();
         static::$_cache[$cacheKey] = [];
     }
 
@@ -304,7 +312,7 @@ abstract class Repository
         if ($this instanceof LocaledRepositoryInterface) {
             return $this->localCache[$name] = $this->model()->{$name};
         }
-        $cacheKey = static::class . $this->model?->id ?: '';
+        $cacheKey = $this->cacheKey();
         return static::$_cache[$cacheKey][$name] = $this->model()->{$name};
     }
 
@@ -317,7 +325,7 @@ abstract class Repository
         if ($this instanceof LocaledRepositoryInterface) {
             $this->localCache[$name] = $value;
         } else {
-            $cacheKey = static::class . $this->model?->id ?: '';
+            $cacheKey = $this->cacheKey();
             static::$_cache[$cacheKey][$name] = $value;
         }
     }
