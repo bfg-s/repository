@@ -107,10 +107,23 @@ class MakeRepositoryCommand extends GeneratorCommand
     {
         $line = '// TODO: Implement getModelClass() method.';
 
+        $model = $this->model();
+
+        return $model ? 'return '.$model.'::class;' : $line;
+    }
+
+    /**
+     * @return class-string<\Illuminate\Database\Eloquent\Model>|null
+     */
+    protected function model(): string|null
+    {
         $model = $this->option('model');
 
         if (! $model) {
             $model = $this->argument('name');
+            if (str_ends_with($model, 'Repository')) {
+                $model = substr($model, 0, -10);
+            }
         }
 
         if ($model && ! class_exists($model)) {
@@ -122,8 +135,7 @@ class MakeRepositoryCommand extends GeneratorCommand
                 $model = null;
             }
         }
-
-        return $model ? 'return \\'.trim(trim($model), '\\').'::class;' : $line;
+        return $model ? '\\'.trim(trim($model), '\\') : $model;
     }
 
     /**

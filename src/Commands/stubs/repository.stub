@@ -13,7 +13,7 @@ class {{ class }} extends Repository{{ implement }}
     /**
      * Model class namespace getter
      *
-     * @return string
+     * @return class-string<\Illuminate\Database\Eloquent\Model>
      */
     protected function getModelClass(): string
     {

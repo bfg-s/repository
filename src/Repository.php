@@ -6,15 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Throwable;
 
 /**
  * Class Repository.
  *
- * @package Bfg\Dev
- *
  * Repository for working with an entity.
  * Can issue datasets, cannot create/modify entities.
+ *
+ * @package Bfg\Dev
+ *
+ * @template TModel of Model|null
  */
 abstract class Repository
 {
@@ -22,7 +26,7 @@ abstract class Repository
     use Conditionable;
 
     /**
-     * @var mixed|Model
+     * @var TModel
      */
     protected mixed $model = null;
 
@@ -42,7 +46,7 @@ abstract class Repository
      * Local cache singleton requests.
      * @var array
      */
-    protected $localCache = [];
+    protected array $localCache = [];
 
     /**
      * Apply formula to the model repository.
@@ -55,11 +59,11 @@ abstract class Repository
     {
         $formula = app($formula, $parameters);
 
-        $result = $formula->apply($this->model());
-
-        if ($result) {
-
-            $this->model = $result;
+        if ($formula instanceof \Bfg\Repository\Formula) {
+            $result = $formula->apply($this->model());
+            if ($result) {
+                $this->setModel($result);
+            }
         }
 
         return $this;
@@ -226,34 +230,34 @@ abstract class Repository
     /**
      * Model class namespace getter.
      *
-     * @return string|object|null
+     * @return TModel|class-string<TModel>
      */
-    protected function getModelClass(): string|object|null
+    protected function getModelClass(): mixed
     {
         return null;
     }
 
     /**
-     * @return mixed
+     * @return TModel
      */
     public function model(): mixed
     {
         if (! $this->model) {
-
-            $class = $this->getModelClass();
-            $this->model = is_string($class) ? app($class) : $class;
+            $this->setModel(
+                $this->getModelClass()
+            );
         }
 
         return $this->model;
     }
 
     /**
-     * @param  mixed  $model
+     * @param  TModel  $class
      * @return $this
      */
-    public function setModel(mixed $model): static
+    public function setModel(mixed $class): static
     {
-        $this->model = $model;
+        $this->model = is_string($class) ? app($class) : $class;;
 
         return $this;
     }
