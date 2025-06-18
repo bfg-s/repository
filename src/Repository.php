@@ -2,6 +2,7 @@
 
 namespace Bfg\Repository;
 
+use Bfg\Resource\BfgResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -17,9 +18,11 @@ use Throwable;
  * @package Bfg\Dev
  *
  * @template TModel of Model|null
+ * @template TResource of BfgResource|null
  */
 abstract class Repository
 {
+    /** @use EloquentHelpers<TModel, TResource> */
     use EloquentHelpers;
     use Conditionable;
 
@@ -30,9 +33,9 @@ abstract class Repository
 
     /**
      * Resource for wrap data.
-     * @var string|null
+     * @var class-string<TResource>|null
      */
-    protected ?string $resource = null;
+    protected string|null $resource = null;
 
     /**
      * Cache singleton requests.
@@ -193,7 +196,7 @@ abstract class Repository
     }
 
     /**
-     * @param  string  $resource
+     * @param  class-string<TResource>  $resource
      * @return $this
      */
     public function resource(string $resource): static
