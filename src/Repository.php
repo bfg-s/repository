@@ -253,12 +253,14 @@ abstract class Repository
     }
 
     /**
-     * @param  TModel  $class
+     * @param  TModel|null  $class
      * @return $this
      */
     public function setModel(mixed $class): static
     {
-        $this->model = is_string($class) ? app($class) : $class;;
+        if ($class) {
+            $this->model = is_string($class) ? app($class) : $class;
+        };
 
         return $this;
     }
