@@ -260,7 +260,7 @@ abstract class Repository
     {
         if ($class) {
             $this->model = is_string($class) ? app($class) : $class;
-        };
+        }
 
         return $this;
     }
