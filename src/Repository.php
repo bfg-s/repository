@@ -267,9 +267,9 @@ abstract class Repository
 
     /**
      * @param  TModel|null  $class
-     * @return $this
+     * @return mixed
      */
-    public function withModel(mixed $class): static
+    public function withModel(mixed $class): mixed
     {
         $this->setModel($class);
 
