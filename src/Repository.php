@@ -267,7 +267,7 @@ abstract class Repository
 
     /**
      * @param  TModel|null  $class
-     * @return mixed
+     * @return TModel
      */
     public function withModel(mixed $class): mixed
     {
