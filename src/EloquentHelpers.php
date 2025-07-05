@@ -148,7 +148,7 @@ trait EloquentHelpers
     }
 
     /**
-     * @param  non-empty-array  $attributes
+     * @param  array  $attributes
      * @return (TResource is null ? TModel : TResource)
      */
     public function update(array $attributes): Model|JsonResource|null
