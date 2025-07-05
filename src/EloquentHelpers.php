@@ -17,6 +17,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 trait EloquentHelpers
 {
     /**
+     * The last status of the last operation.
+     *
+     * @var bool
+     */
+    protected bool $lastStatus = false;
+
+    /**
      * @param  non-empty-array  $columns
      * @return (TResource is null ? \Illuminate\Database\Eloquent\Collection<int, TModel> : BfgResourceCollection<int, TResource>
      */
@@ -39,6 +46,8 @@ trait EloquentHelpers
     public function first(array $columns = ['*']): Model|JsonResource|null
     {
         $this->model = $this->model()->first($columns);
+
+        $this->lastStatus = !! $this->model;
 
         if ($this->resource) {
             return $this->resource::make(
@@ -128,6 +137,8 @@ trait EloquentHelpers
     {
         $this->model = $this->model()->create($attributes);
 
+        $this->lastStatus = !! $this->model?->id;
+
         if ($this->resource) {
             return $this->resource::make(
                 $this->model()
@@ -142,7 +153,7 @@ trait EloquentHelpers
      */
     public function update(array $attributes): Model|JsonResource|null
     {
-        $this->model()->update($attributes);
+        $this->lastStatus = !! $this->model()->update($attributes);
 
         if ($this->resource) {
             return $this->resource::make(
@@ -157,7 +168,7 @@ trait EloquentHelpers
      */
     public function delete(): Model|JsonResource|null
     {
-        $this->model()->delete();
+        $this->lastStatus = !! $this->model()->delete();
 
         if ($this->resource) {
             return $this->resource::make(
@@ -165,5 +176,15 @@ trait EloquentHelpers
             );
         }
         return $this->model();
+    }
+
+    /**
+     * Check if the last operation was successful.
+     *
+     * @return bool
+     */
+    public function isSuccess(): bool
+    {
+        return $this->lastStatus;
     }
 }
